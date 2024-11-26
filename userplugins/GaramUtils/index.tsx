@@ -32,6 +32,11 @@ const settings = definePluginSettings({
         type: OptionType.BOOLEAN,
         default: false,
         description: "Auto-send command instead of leaving it in chatbox",
+    },
+    copyCodeWithPriceRange: {
+        type: OptionType.BOOLEAN,
+        default: false,
+        description: "Copy code when checking Price range",
     }
 });
 
@@ -129,6 +134,13 @@ const GaramButtons: React.FC<AccessoryProps> = ({ message }) => {
         logger.info("Code copied to clipboard");
     };
 
+    const handlePriceRange = () => {
+        handleClick(`/sell manual code:${code} price:1`);
+        if (settings.store.copyCodeWithPriceRange) {
+            handleCopyCode();
+        }
+    };
+
     const buttonStyle: React.CSSProperties = {
         minWidth: "fit-content",
         padding: "0 12px",
@@ -151,7 +163,7 @@ const GaramButtons: React.FC<AccessoryProps> = ({ message }) => {
                 </Button>
                 <Button
                     color={Button.Colors.BRAND}
-                    onClick={() => handleClick(`/sell manual code:${code} price:1`)}
+                    onClick={handlePriceRange}
                     style={buttonStyle}
                 >
                    🏷️ Price range
