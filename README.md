@@ -12,6 +12,7 @@ Credits to Claude 3.5 Sonnet. Of course I can't code it purely on my own.
 - Also **Price range** button to execute `/sell manual code:[CODE] price:1` automatically for the warning showing market price range of the card.
 - Also **/sell auto** button to.. Guess what it does.
 - **View card** button under `/daily` cards for its copy number. It should've been on the bot's side but well.
+- **/work** and **/drop** buttons under their reminders.
 - More planned. Open issue or ping me on Discord. You know where to find me.
 
 ### Configurables
