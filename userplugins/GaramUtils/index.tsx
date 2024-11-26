@@ -103,17 +103,26 @@ const GaramButtons: React.FC<AccessoryProps> = ({ message }) => {
                 if (applicationCommand) {
                     observer.disconnect();
                     setTimeout(() => {
-                        const enter = new KeyboardEvent("keydown", {
-                            key: "Enter",
-                            code: "Enter",
-                            which: 13,
-                            keyCode: 13,
-                            bubbles: true
-                        });
                         const textArea = document.querySelector("[class*=\"slateTextArea\"]");
                         if (textArea) {
-                            textArea.dispatchEvent(enter);
-                            logger.info("Simulated Keypress on Enter");
+                            const enter = new KeyboardEvent("keydown", {
+                                key: "Enter",
+                                code: "Enter",
+                                which: 13,
+                                keyCode: 13,
+                                bubbles: true
+                            });
+
+                            if (command.startsWith("/work ")) {
+                                textArea.dispatchEvent(enter);
+                                setTimeout(() => {
+                                    textArea.dispatchEvent(enter);
+                                    logger.info("Simulated double Keypress on Enter for /work command");
+                                }, 50);
+                            } else {
+                                textArea.dispatchEvent(enter);
+                                logger.info("Simulated Keypress on Enter");
+                            }
                         } else {
                             logger.error("Error simulating Enter, chatbox not found.");
                         }
@@ -121,7 +130,6 @@ const GaramButtons: React.FC<AccessoryProps> = ({ message }) => {
                 }
             });
 
-            // Set a timeout to disconnect the observer if the command is not recognized
             setTimeout(() => {
                 observer.disconnect();
                 logger.warn("Can't find any valid command in chatbox, timed out.");
