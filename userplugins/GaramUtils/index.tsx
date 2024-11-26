@@ -59,6 +59,7 @@ interface AccessoryProps {
                 id: string;
             };
         };
+        interactionData?: any;
     };
 }
 
@@ -89,7 +90,6 @@ const GaramButtons: React.FC<AccessoryProps> = ({ message }) => {
     }
 
     const code = message.embeds?.[0]?.rawDescription ? extractCode(message.embeds[0].rawDescription) : null;
-    if (!code) return null;
 
     const handleClick = (command: string) => {
         logger.info("Button clicked, command:", command);
@@ -130,14 +130,22 @@ const GaramButtons: React.FC<AccessoryProps> = ({ message }) => {
     };
 
     const handleCopyCode = () => {
-        copyWithToast(code, "Code copied to clipboard!");
-        logger.info("Code copied to clipboard");
+        if (code) {
+            copyWithToast(code, "Code copied to clipboard!");
+            logger.info("Code copied to clipboard");
+        } else {
+            logger.error("Failed to copy code: code is null");
+        }
     };
 
     const handlePriceRange = () => {
-        handleClick(`/sell manual code:${code} price:1`);
-        if (settings.store.copyCodeWithPriceRange) {
-            handleCopyCode();
+        if (code) {
+            handleClick(`/sell manual code:${code} price:1`);
+            if (settings.store.copyCodeWithPriceRange) {
+                handleCopyCode();
+            }
+        } else {
+            logger.error("Failed to handle price range: code is null");
         }
     };
 
@@ -148,10 +156,18 @@ const GaramButtons: React.FC<AccessoryProps> = ({ message }) => {
         flexShrink: 0,
     };
 
-    const isDropMessage = message.interaction?.name === "drop" && message.interaction?.user.id === UserStore.getCurrentUser().id;
+    const isDropResultMessage = message.interaction?.name === "drop" && message.interaction?.user.id === UserStore.getCurrentUser().id;
     const isDailyMessage = message.interactionMetadata?.name === "daily" && message.interactionMetadata?.user.id === UserStore.getCurrentUser().id;
+    const isDropReminderMessage = message.interactionMetadata?.name === "drop" &&
+        message.interactionMetadata?.user.id === UserStore.getCurrentUser().id &&
+        message.interaction === null &&
+        message.interactionData === null;
+    const isWorkReminderMessage = message.interactionMetadata?.name === "work" &&
+        message.interactionMetadata?.user.id === UserStore.getCurrentUser().id &&
+        message.interaction === null &&
+        message.interactionData === null;
 
-    if (isDropMessage) {
+    if (isDropResultMessage && code) {
         return (
             <Flex direction={Flex.Direction.HORIZONTAL} justify={Flex.Justify.START} style={{ gap: "8px" }}>
                 <Button
@@ -159,25 +175,25 @@ const GaramButtons: React.FC<AccessoryProps> = ({ message }) => {
                     onClick={handleCopyCode}
                     style={buttonStyle}
                 >
-                   📝 Copy code
+                    📝 Copy code
                 </Button>
                 <Button
                     color={Button.Colors.BRAND}
                     onClick={handlePriceRange}
                     style={buttonStyle}
                 >
-                   🏷️ Price range
+                    🏷️ Price range
                 </Button>
                 <Button
                     color={Button.Colors.GREEN}
                     onClick={() => handleClick(`/sell auto code:${code}`)}
                     style={buttonStyle}
                 >
-                   💸 /sell auto
+                    💸 /sell auto
                 </Button>
             </Flex>
         );
-    } else if (isDailyMessage) {
+    } else if (isDailyMessage && code) {
         return (
             <Flex direction={Flex.Direction.HORIZONTAL} justify={Flex.Justify.START} style={{ gap: "8px" }}>
                 <Button
@@ -185,7 +201,31 @@ const GaramButtons: React.FC<AccessoryProps> = ({ message }) => {
                     onClick={() => handleClick(`/view codes:${code}`)}
                     style={buttonStyle}
                 >
-                   👁 View card
+                    👁 View card
+                </Button>
+            </Flex>
+        );
+    } else if (isDropReminderMessage) {
+        return (
+            <Flex direction={Flex.Direction.HORIZONTAL} justify={Flex.Justify.START} style={{ gap: "8px" }}>
+                <Button
+                    color={Button.Colors.BRAND}
+                    onClick={() => handleClick("/drop ")}
+                    style={buttonStyle}
+                >
+                    /drop
+                </Button>
+            </Flex>
+        );
+    } else if (isWorkReminderMessage) {
+        return (
+            <Flex direction={Flex.Direction.HORIZONTAL} justify={Flex.Justify.START} style={{ gap: "8px" }}>
+                <Button
+                    color={Button.Colors.BRAND}
+                    onClick={() => handleClick("/work ")}
+                    style={buttonStyle}
+                >
+                    /work
                 </Button>
             </Flex>
         );
