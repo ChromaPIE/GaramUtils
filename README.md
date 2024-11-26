@@ -1,5 +1,3 @@
-# GaramUtils
-
 ### Vencord plugin bringing actual QoL improvements to Garam bot.
 
 Credits to Claude 3.5 Sonnet. Of course I can't code it purely on my own.
@@ -19,6 +17,12 @@ Credits to Claude 3.5 Sonnet. Of course I can't code it purely on my own.
 
 - **Auto Send Commands**: Auto-send command instead of leaving it in chatbox. DEFAULT: OFF
 - **Copy Code With Price Range**: Copy code when checking Price range. DEFAULT: OFF
+
+## Showcase
+
+<img src="https://github.com/user-attachments/assets/0f7474b2-5a23-41b3-8bdf-04bb352f6215" height="300"><img src="https://github.com/user-attachments/assets/34593de6-e932-44da-b81d-6931653deb42" height="300">
+
+<img src="https://github.com/user-attachments/assets/e1231373-efa6-448d-bca7-64554ccc99eb" height="200">
 
 ------
 
